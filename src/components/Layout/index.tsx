@@ -1,7 +1,9 @@
 import React from "react";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import Header from "@src/components/Header";
 import Footer from "@src/components/Footer";
+import ShowCase from "@src/components/ShowCase";
 import styles from "@styles/Layout.module.css";
 
 interface Props {
@@ -15,6 +17,8 @@ const defaultProps = {
   keywords: "music, dj, edm",
 };
 const Layout: React.FC<Props> = (props) => {
+  const router = useRouter();
+  const isHome = router.pathname === "/";
   return (
     <div>
       <Head>
@@ -29,6 +33,7 @@ const Layout: React.FC<Props> = (props) => {
         />
       </Head>
       <Header />
+      {isHome && <ShowCase />}
       <div className={styles.container}>{props.children}</div>
       <Footer />
     </div>
