@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import Search from "@src/components/Search";
 import styles from "@styles/header.module.css";
 
 interface Props {}
@@ -11,6 +12,9 @@ const Header: React.FC<Props> = (props) => {
           <a>DJ Events</a>
         </Link>
       </div>
+
+      <Search />
+
       <nav>
         <ul>
           <li>
