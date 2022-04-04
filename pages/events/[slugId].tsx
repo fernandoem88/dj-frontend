@@ -1,4 +1,6 @@
-import React, { useCallback } from "react";
+import React from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
 import Layout from "@src/components/Layout";
 import styles from "@styles/Event.module.css";
@@ -6,14 +8,28 @@ import Link from "next/link";
 import { API_URL } from "@src/shared/config";
 import Image from "next/image";
 import { getImageSrc, formatDateStr } from "@src/components/EventItem";
+import { StrapiResponse } from "@src/types";
+import { useRouter } from "next/router";
 interface Props {
   event: any;
 }
 
 const EventPage: React.FC<Props> = ({ event }) => {
-  const handleDelete = React.useCallback(() => {
-    //callback logic goes here
-  }, []);
+  const router = useRouter();
+  const handleDelete = React.useCallback(async () => {
+    if (!confirm("are you sure?")) {
+      return;
+    }
+    const res = await fetch(`${API_URL}/api/events/${event.id}`, {
+      method: "DELETE",
+    });
+    const { error }: StrapiResponse = await res.json();
+    if (error) {
+      toast.error(`${error.status} error: ${error.message}`);
+      return;
+    }
+    router.push("/events");
+  }, [event.id]);
 
   return (
     <Layout>
@@ -29,18 +45,19 @@ const EventPage: React.FC<Props> = ({ event }) => {
             <FaTimes />
           </a>
         </div>
+        <h3>{event.name}</h3>
         <span>
           {formatDateStr(event.date)} ad {event.time}
         </span>
-        {event.image && (
-          <div className={styles.image}>
-            <Image
-              src={getImageSrc(event.image, "small")}
-              width={960}
-              height={600}
-            />
-          </div>
-        )}
+
+        <div className={styles.image}>
+          <Image
+            src={getImageSrc(event.image, "small")}
+            width={960}
+            height={600}
+          />
+        </div>
+
         <h3>Performers:</h3>
         <p>{event.performers}</p>
 
@@ -54,23 +71,27 @@ const EventPage: React.FC<Props> = ({ event }) => {
           <a className={styles.back}>Go Bakc {"<"}</a>
         </Link>
       </div>
+      <ToastContainer />
     </Layout>
   );
 };
 
 export async function getStaticPaths() {
   const res = await fetch(`${API_URL}/api/events`);
-  const jsonResp = await res.json();
+  const { error, data }: StrapiResponse = await res.json();
 
-  const events = jsonResp.data.map((d) => {
-    return {
-      id: d.id,
-      ...d.attributes,
-      // image: d.attributes.image?.data.attributes,
-    };
-  });
-  const paths = events.map((evt) => {
-    return { params: { slugId: String(evt.id) } };
+  // const events = jsonResp.data.map((d) => {
+  //   return {
+  //     id: d.id,
+  //     ...d.attributes,
+  //     // image: d.attributes.image?.data.attributes,
+  //   };
+  // });
+  // const paths = events.map((evt) => {
+  //   return { params: { slugId: String(evt.id) } };
+  // });
+  const paths = data.map((d) => {
+    return { params: { slugId: String(d.id) } };
   });
 
   return { paths, fallback: false }; // false => it will show 404 if the path is not found
@@ -84,7 +105,7 @@ export async function getStaticProps({ params }: any) {
   const event = {
     id: data.id,
     ...data.attributes,
-    image: data.attributes.image?.data.attributes,
+    image: data.attributes.image?.data?.attributes || null,
   };
 
   const props = {

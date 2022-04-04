@@ -22,6 +22,11 @@ const Header: React.FC<Props> = (props) => {
               <a>Events</a>
             </Link>
           </li>
+          <li>
+            <Link href="/events/add">
+              <a>Add</a>
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>

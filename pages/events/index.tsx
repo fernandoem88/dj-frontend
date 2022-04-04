@@ -36,7 +36,7 @@ export async function getStaticProps() {
     return {
       id: d.id,
       ...d.attributes,
-      image: d.attributes.image?.data.attributes || null,
+      image: d.attributes.image?.data?.attributes || null,
     };
   });
 

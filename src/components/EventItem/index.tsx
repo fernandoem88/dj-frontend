@@ -7,7 +7,7 @@ interface Props {
   event: any;
 }
 export const formatDateStr = (date: string) => {
-  return new Date(date).toLocaleDateString("fr-FR");
+  return new Date(date).toLocaleDateString("de-DE");
 };
 export const getImageSrc = (
   image: any,
