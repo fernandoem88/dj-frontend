@@ -26,7 +26,7 @@ export default function HomePage({ events }) {
       ))}
 
       {events.length > 0 && (
-        <Link href="/events">
+        <Link href="/events?page=1">
           <a className="btn-secondary">View All Events</a>
         </Link>
       )}
@@ -37,6 +37,7 @@ export default function HomePage({ events }) {
 export async function getStaticProps() {
   const queryString = qs.stringify(
     {
+      populate: "*",
       filters: {
         $where: {},
       },
