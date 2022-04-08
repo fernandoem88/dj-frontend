@@ -7,7 +7,7 @@
     "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "incremental": true,
+    // "incremental": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -16,7 +16,7 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@pages/*": ["pages/*"],
+      "@pages/*": ["src/pages/*"],
       "@src/*": ["src/*"],
       "@styles/*": ["styles/*"]
     }

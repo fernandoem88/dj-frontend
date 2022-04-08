@@ -5,6 +5,7 @@ import Header from "@src/components/Header";
 import Footer from "@src/components/Footer";
 import ShowCase from "@src/components/ShowCase";
 import styles from "@styles/Layout.module.css";
+import AuthContext from "@src/contexts/AuthContext";
 
 interface Props {
   title?: string;
@@ -19,6 +20,7 @@ const defaultProps = {
 const Layout: React.FC<Props> = (props) => {
   const router = useRouter();
   const isHome = router.pathname === "/";
+
   return (
     <div>
       <Head>

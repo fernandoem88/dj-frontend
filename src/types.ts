@@ -8,7 +8,9 @@ export type StrapiResponse<T = any> =
       data: undefined;
       meta: any;
       error: {
-        details: Object;
+        details: {
+          errors: Array<{ path: string[]; message: string; name: string }>;
+        };
         message: string;
         name: string;
         status: number;

@@ -163,11 +163,12 @@ const EditEventPage: React.FC<Props> = (props) => {
   );
 };
 
-export async function getServerSideProps({ params }: any) {
+export async function getServerSideProps({ params, req }: any) {
   const { id } = params;
 
   const res = await fetch(`${API_URL}/api/events/${id}?populate=*`);
   const { data } = await res.json();
+  console.log("req headers", req.headers?.cookie);
   const event = {
     id: data.id,
     ...data.attributes,
