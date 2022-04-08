@@ -38,7 +38,7 @@ const Header: React.FC<Props> = (props) => {
                   <a>Dashboard</a>
                 </Link>
               </li>
-              <li>
+              <li onClick={logout}>
                 <Link href="/account/login">
                   <a>
                     <FaSignOutAlt /> logout

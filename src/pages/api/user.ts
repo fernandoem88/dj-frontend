@@ -3,17 +3,6 @@ import type { NextRequest } from "next/server";
 import { StrapiResponse } from "@src/types";
 import cookie from "cookie";
 
-interface StrapiUser {
-  id: 1;
-  username: string;
-  email: string;
-  provider: string; //"local";
-  confirmed: boolean;
-  blocked: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
 const handler = async (req, res: any) => {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);
@@ -24,9 +13,11 @@ const handler = async (req, res: any) => {
     res.status(403).json({ message: "Not authorized!" });
     return;
   }
+
   try {
     const { token } = cookie.parse(req.headers.cookie);
-    const strapiRes = await fetch(`${API_URL}/users/me`, {
+
+    const strapiRes = await fetch(`${API_URL}/api/users/me`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
