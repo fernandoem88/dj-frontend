@@ -7,6 +7,7 @@ import { StrapiResponse } from "@src/types";
 import Pagination from "@src/components/Pagination";
 
 interface Props {
+  error?: { message: string };
   events: Array<{ id: string; slug: string; name: string }>;
   pagination: {
     page: number;
@@ -15,21 +16,25 @@ interface Props {
     total: number;
   };
 }
-export default function EventsPage({ events, pagination }: Props) {
-  const hasEvents = events.length > 0;
+export default function EventsPage({ events, pagination, error }: Props) {
+  const hasEvents = events?.length > 0;
+  const msg = error ? error.message : "No events to show";
   return (
     <Layout>
       <h1>Events</h1>
 
-      {events.map((evt) => {
-        return (
-          <EventItem key={evt.id} event={evt}>
-            {evt.name}
-          </EventItem>
-        );
-      })}
-      {!hasEvents && <h3>No events to show</h3>}
-      <Pagination page={pagination.page} total={pagination.total} />
+      {!error &&
+        events.map((evt) => {
+          return (
+            <EventItem key={evt.id} event={evt}>
+              {evt.name}
+            </EventItem>
+          );
+        })}
+      {!hasEvents && <h3>{msg}</h3>}
+      {!!pagination && (
+        <Pagination page={pagination.page} total={pagination.total} />
+      )}
     </Layout>
   );
 }
@@ -55,22 +60,27 @@ export async function getServerSideProps(urlParams) {
       encodeValuesOnly: true,
     }
   );
+  try {
+    const res = await fetch(API_URL + "/api/events?" + queryString);
+    const { data, meta }: StrapiResponse = await res.json();
+    const events = data.map((d) => {
+      return {
+        id: d.id,
+        ...d.attributes,
+        image: d.attributes.image?.data?.attributes || null,
+      };
+    });
 
-  const res = await fetch(API_URL + "/api/events?" + queryString);
-  const { data, meta }: StrapiResponse = await res.json();
-  const events = data.map((d) => {
+    const { pagination } = meta;
+
+    // this is in the server
     return {
-      id: d.id,
-      ...d.attributes,
-      image: d.attributes.image?.data?.attributes || null,
+      props: { events, pagination },
+      // revalidate: 1, // reload after 1 sec everytime data changes in case of getStaticProps
     };
-  });
-
-  const { pagination } = meta;
-
-  // this is in the server
-  return {
-    props: { events, pagination },
-    // revalidate: 1, // reload after 1 sec everytime data changes in case of getStaticProps
-  };
+  } catch (error) {
+    return {
+      props: { error: { message: error?.message || "something went wrong" } },
+    };
+  }
 }

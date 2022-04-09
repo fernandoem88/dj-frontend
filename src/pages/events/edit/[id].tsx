@@ -168,7 +168,7 @@ export async function getServerSideProps({ params, req }: any) {
 
   const res = await fetch(`${API_URL}/api/events/${id}?populate=*`);
   const { data } = await res.json();
-  console.log("req headers", req.headers?.cookie);
+
   const event = {
     id: data.id,
     ...data.attributes,

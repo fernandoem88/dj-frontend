@@ -7,7 +7,11 @@ const AuthContext = React.createContext<{
   login: (params: { email: string; password: string }) => void;
   logout: () => void;
   error?: any;
-  register: (user: any) => void;
+  register: (user: {
+    username: string;
+    email: string;
+    password: string;
+  }) => void;
 }>({} as any);
 
 export const AuthProvider = ({ children }) => {
@@ -15,6 +19,18 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = React.useState(null);
 
   const router = useRouter();
+
+  // Check if user is logged in
+  const checkUserLoggedIn = React.useCallback(async () => {
+    const res = await fetch(`${NEXT_URL}/api/user-auth`);
+
+    if (res.ok) {
+      const data = await res.json();
+      setUser(data.user);
+    } else {
+      setUser(null);
+    }
+  }, []);
 
   // Register user
   const register = React.useCallback(async (user: any) => {
@@ -26,13 +42,18 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify(user),
     });
 
-    const data = await res.json();
+    try {
+      const data = await res.json();
 
-    if (res.ok) {
-      setUser(data.user);
-      router.push("/account/dashboard");
-    } else {
-      setError(data.message);
+      if (res.ok) {
+        setUser(data.user);
+        router.push("/account/dashboard");
+      } else {
+        setError(data.message);
+        setError(null);
+      }
+    } catch (error) {
+      setError(error?.message || "something went wrong");
       setError(null);
     }
   }, []);
@@ -74,18 +95,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {}
   };
-
-  // Check if user is logged in
-  const checkUserLoggedIn = React.useCallback(async () => {
-    const res = await fetch(`${NEXT_URL}/api/user`);
-
-    if (res.ok) {
-      const data = await res.json();
-      setUser(data.user);
-    } else {
-      setUser(null);
-    }
-  }, []);
 
   React.useEffect(() => {
     checkUserLoggedIn();

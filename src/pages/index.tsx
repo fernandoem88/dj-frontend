@@ -15,17 +15,18 @@ import { API_URL } from "@src/shared/config";
 //   return null;
 // }
 
-export default function HomePage({ events }) {
+export default function HomePage({ events, error }) {
+  const msg = error || "No events to show";
   return (
     <Layout>
       <h1>Upcoming Events</h1>
-      {events.length === 0 && <h3>No events to show</h3>}
+      {events.length === 0 && <h3>{msg}</h3>}
 
       {events.map((evt) => (
         <EventItem key={evt.id} event={evt} />
       ))}
 
-      {events.length > 0 && (
+      {!error && events.length > 0 && (
         <Link href="/events?page=1">
           <a className="btn-secondary">View All Events</a>
         </Link>
@@ -51,17 +52,29 @@ export async function getStaticProps() {
       encodeValuesOnly: true,
     }
   );
-  const res = await fetch(`${API_URL}/api/events?${queryString}`);
-  const events = (await res.json()).data.map((d) => {
-    return {
-      id: d.id,
-      ...d.attributes,
-      image: d.attributes.image?.data?.attributes || null,
-    };
-  });
+  try {
+    const res = await fetch(`${API_URL}/api/events?${queryString}`);
+    const events = (await res.json()).data.map((d) => {
+      return {
+        id: d.id,
+        ...d.attributes,
+        image: d.attributes.image?.data?.attributes || null,
+      };
+    });
 
-  return {
-    props: { events },
-    revalidate: 1,
-  };
+    return {
+      props: { events },
+      revalidate: 1,
+    };
+  } catch (error) {
+    return {
+      // redirect: {
+      //   permanent: false,
+      //   destination: "/ant",
+      //   props: { events: [], error: error?.messgage || "something went wrong" },
+      // },
+      props: { events: [], error: error?.messgage || "something went wrong" },
+      revalidate: 1,
+    };
+  }
 }

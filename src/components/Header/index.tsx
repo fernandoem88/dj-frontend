@@ -57,6 +57,11 @@ const Header: React.FC<Props> = (props) => {
               </Link>
             </li>
           )}
+          <li>
+            <Link href="/ant">
+              <a>Ant</a>
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>
