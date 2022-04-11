@@ -8,12 +8,22 @@ import "@styles/theme.custom.less";
 import "@styles/globals.css";
 import React from "react";
 import { AuthProvider } from "@src/contexts/AuthContext";
+import { createGlobalStyle, css } from "styled-components";
+
+const GlobalStyle = createGlobalStyle(
+  {},
+  css`
+    body {
+    }
+  `
+);
 
 function MyApp({ Component, pageProps }) {
   const [ctx, setCtx] = React.useState({ login: null, error: null });
 
   return (
     <AuthProvider>
+      <GlobalStyle />
       <Component {...pageProps} />
     </AuthProvider>
   );

@@ -7,8 +7,11 @@ import Link from "next/link";
 import styles from "@styles/Form.module.css";
 import { API_URL } from "@src/shared/config";
 import { StrapiResponse } from "@src/types";
+import { parseCookies } from "@src/shared/helpers";
 
-interface Props {}
+interface Props {
+  token: string;
+}
 const initialValues = {
   name: "",
   performers: "",
@@ -34,7 +37,10 @@ const AddEventPage: React.FC<Props> = (props) => {
 
       const res = await fetch(`${API_URL}/api/events`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${props.token}`,
+        },
         body: JSON.stringify({ data: values }),
       });
 
@@ -51,7 +57,7 @@ const AddEventPage: React.FC<Props> = (props) => {
       }
       router.push(`/events/${evt.data.id}`);
     },
-    [values]
+    [values, props.token]
   );
 
   const handleChange = React.useCallback((e: any) => {
@@ -106,3 +112,19 @@ const AddEventPage: React.FC<Props> = (props) => {
 
 export type AddEventPageProps = Props;
 export default React.memo(AddEventPage);
+
+interface Ctx {
+  params: any;
+  query: any;
+  req: any;
+}
+export async function getServerSideProps(ctx: Ctx) {
+  // const {} = qs.stringify(query);
+  // const data = await fetch(`/api/`);
+  const { token } = ctx.req.cookies;
+  return {
+    props: {
+      token,
+    },
+  };
+}
