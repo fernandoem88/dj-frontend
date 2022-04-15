@@ -31,7 +31,7 @@ const EventItem: React.FC<Props> = ({ event }) => {
   return (
     <div className={styles.event}>
       <div className={styles.img}>
-        <Image src={getImageSrc(event.image)} width="170" height="100" />
+        <Image src={getImageSrc(event.image)} width="170" height="100" alt="" />
       </div>
       <div className={styles.info}>
         <span>

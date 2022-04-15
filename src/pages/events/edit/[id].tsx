@@ -71,7 +71,7 @@ const EditEventPage: React.FC<Props> = (props) => {
       }
       router.push(`/events/${props.event.id}`);
     },
-    [values, props.event.id, token]
+    [values, props.event.id, token, router]
   );
 
   const handleChange = React.useCallback((e: any) => {
@@ -109,13 +109,16 @@ const EditEventPage: React.FC<Props> = (props) => {
     setShowModal(true);
   }, []);
 
-  const handleUpload = React.useCallback(async (errorData?: any) => {
-    if (errorData) {
-      toast.error(`${errorData.status} error: ${errorData.message}`);
-      return;
-    }
-    router.reload();
-  }, []);
+  const handleUpload = React.useCallback(
+    async (errorData?: any) => {
+      if (errorData) {
+        toast.error(`${errorData.status} error: ${errorData.message}`);
+        return;
+      }
+      router.reload();
+    },
+    [router]
+  );
 
   const handleModalClose = React.useCallback(() => {
     setShowModal(false);
@@ -139,7 +142,7 @@ const EditEventPage: React.FC<Props> = (props) => {
             <label>Image preview </label>
             <div>
               {imagePreview && (
-                <Image src={imagePreview} width={170} height={100} />
+                <Image src={imagePreview} width={170} height={100} alt="" />
               )}
 
               <button className="btn-secondary" onClick={handleImageSet}>

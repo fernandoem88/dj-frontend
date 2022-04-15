@@ -11,7 +11,7 @@ interface Props {
 const Modal: React.FC<Props> = (props) => {
   const [isBrowser, setIsBrowser] = React.useState(false);
 
-  React.useEffect(() => setIsBrowser(true));
+  React.useEffect(() => setIsBrowser(true), []);
 
   const handleClose = (e) => {
     e.preventDefault();

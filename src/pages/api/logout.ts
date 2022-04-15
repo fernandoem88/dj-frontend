@@ -1,6 +1,3 @@
-import { API_URL } from "@src/shared/config";
-import type { NextRequest } from "next/server";
-import { StrapiResponse } from "@src/types";
 import cookie from "cookie";
 
 interface StrapiUser {

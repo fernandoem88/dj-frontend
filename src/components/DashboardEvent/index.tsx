@@ -11,17 +11,17 @@ export const DashboradEvent: React.FC<Props> = ({ event, handleDelete }) => {
   return (
     <sc.Event>
       <sc.EventH4>
-        <Link href={`/events/${event.id}`}>
+        <Link href={`/events/${event.id}`} passHref>
           <a>{event.name}</a>
         </Link>
       </sc.EventH4>
-      <Link href={`/events/edit/${event.id}`}>
+      <Link href={`/events/edit/${event.id}`} passHref>
         <sc.Btn>
           <FaPencilAlt /> <span>Edit event</span>
         </sc.Btn>
       </Link>
-      <Link href="#">
-        <sc.BtnDelete onClick={handleDelete}>
+      <Link href="#" passHref>
+        <sc.BtnDelete href="#" onClick={handleDelete}>
           <FaTrash /> <span>Delete event</span>
         </sc.BtnDelete>
       </Link>

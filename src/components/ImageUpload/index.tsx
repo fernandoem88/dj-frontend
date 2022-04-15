@@ -36,7 +36,7 @@ const ImageUpload: React.FC<Props> = (props) => {
       const { error }: StrapiResponse = await res.json();
       props.handleUpload(error);
     },
-    [image, props.eventId, props.handleUpload, props.token, props.imageId]
+    [image, props]
   );
 
   const handleFileChange = React.useCallback((e: any) => {

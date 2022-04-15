@@ -7,7 +7,6 @@ import Link from "next/link";
 import styles from "@styles/Form.module.css";
 import { API_URL } from "@src/shared/config";
 import { StrapiResponse } from "@src/types";
-import { parseCookies } from "@src/shared/helpers";
 
 interface Props {
   token: string;
@@ -57,7 +56,7 @@ const AddEventPage: React.FC<Props> = (props) => {
       }
       router.push(`/events/${evt.data.id}`);
     },
-    [values, props.token]
+    [values, props.token, router]
   );
 
   const handleChange = React.useCallback((e: any) => {

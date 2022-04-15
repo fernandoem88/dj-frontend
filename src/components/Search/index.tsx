@@ -13,7 +13,7 @@ const Search: React.FC<Props> = (props) => {
       router.push(`/events/search?term=${term}`);
       setTerm("");
     },
-    [term]
+    [term, router]
   );
 
   const handleChange = React.useCallback((e: any) => {

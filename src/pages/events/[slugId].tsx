@@ -39,7 +39,7 @@ const EventPage: React.FC<Props> = ({ event }) => {
       return;
     }
     router.push("/events");
-  }, [event.id]);
+  }, [event.id, token, router]);
 
   return (
     <Layout>
@@ -65,6 +65,7 @@ const EventPage: React.FC<Props> = ({ event }) => {
             src={getImageSrc(event.image, ImgFormat.small)}
             width={960}
             height={600}
+            alt=""
           />
         </div>
 
