@@ -3,25 +3,35 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
 import Layout from "@src/components/Layout";
+import EventMap from "@src/components/EventMap";
 import styles from "@styles/Event.module.css";
 import Link from "next/link";
 import { API_URL } from "@src/shared/config";
 import Image from "next/image";
-import { getImageSrc, formatDateStr } from "@src/components/EventItem";
+import {
+  getImageSrc,
+  formatDateStr,
+  ImgFormat,
+} from "@src/components/EventItem";
 import { StrapiResponse } from "@src/types";
 import { useRouter } from "next/router";
+import { useToken } from "@src/contexts/AuthContext";
 interface Props {
   event: any;
 }
 
 const EventPage: React.FC<Props> = ({ event }) => {
   const router = useRouter();
+  const token = useToken();
   const handleDelete = React.useCallback(async () => {
     if (!confirm("are you sure?")) {
       return;
     }
     const res = await fetch(`${API_URL}/api/events/${event.id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     const { error }: StrapiResponse = await res.json();
     if (error) {
@@ -52,7 +62,7 @@ const EventPage: React.FC<Props> = ({ event }) => {
 
         <div className={styles.image}>
           <Image
-            src={getImageSrc(event.image, "small")}
+            src={getImageSrc(event.image, ImgFormat.small)}
             width={960}
             height={600}
           />
@@ -67,8 +77,10 @@ const EventPage: React.FC<Props> = ({ event }) => {
         <h3>Venue: {event.venue}</h3>
         <p>{event.address}</p>
 
+        <EventMap event={event} />
+
         <Link href="/events">
-          <a className={styles.back}>Go Bakc {"<"}</a>
+          <a className={styles.back}>Go Back {"<"}</a>
         </Link>
       </div>
       <ToastContainer />
@@ -80,16 +92,6 @@ export async function getStaticPaths() {
   const res = await fetch(`${API_URL}/api/events`);
   const { error, data }: StrapiResponse = await res.json();
 
-  // const events = jsonResp.data.map((d) => {
-  //   return {
-  //     id: d.id,
-  //     ...d.attributes,
-  //     // image: d.attributes.image?.data.attributes,
-  //   };
-  // });
-  // const paths = events.map((evt) => {
-  //   return { params: { slugId: String(evt.id) } };
-  // });
   const paths = data.map((d) => {
     return { params: { slugId: String(d.id) } };
   });

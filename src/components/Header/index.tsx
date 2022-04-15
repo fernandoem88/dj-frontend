@@ -3,12 +3,11 @@ import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 import React from "react";
 import Search from "@src/components/Search";
 import styles from "@styles/header.module.css";
-import AuthContext from "@src/contexts/AuthContext";
+import { useAuthContext } from "@src/contexts/AuthContext";
 
 interface Props {}
 const Header: React.FC<Props> = (props) => {
-  const authCtx = React.useContext(AuthContext);
-  const { user, logout } = authCtx;
+  const { user, logout } = useAuthContext();
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
@@ -34,7 +33,7 @@ const Header: React.FC<Props> = (props) => {
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard">
+                <Link href="/account/dashboard">
                   <a>Dashboard</a>
                 </Link>
               </li>

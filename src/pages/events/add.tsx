@@ -13,13 +13,13 @@ interface Props {
   token: string;
 }
 const initialValues = {
-  name: "",
-  performers: "",
-  venue: "",
-  address: "",
-  date: "",
-  time: "",
-  description: "",
+  name: "Pippo_1",
+  performers: "Pluto",
+  venue: "aaaaaa",
+  address: "abc",
+  date: "01.01.2022",
+  time: "12:12:12:000",
+  description: "lisoko",
 };
 const AddEventPage: React.FC<Props> = (props) => {
   const [values, setValues] = React.useState(initialValues);

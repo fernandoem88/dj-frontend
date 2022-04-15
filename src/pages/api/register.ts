@@ -55,7 +55,7 @@ const handler = async (req, res: any) => {
           path: "/",
         })
       );
-      res.status(200).send({ user: result.user });
+      res.status(200).send({ user: result.user, token: result.jwt });
       return;
     }
     res.status(405).send({ message: (result as any).message[0].messages[0] });

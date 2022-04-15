@@ -5,14 +5,14 @@ import "react-toastify/dist/ReactToastify.css";
 
 import Link from "next/link";
 import Layout from "@src/components/Layout";
-import AuthContext from "@src/contexts/AuthContext";
+import { useAuthContext } from "@src/contexts/AuthContext";
 import styles from "@styles/AuthForm.module.css";
 
 export default function LoginPage() {
   const [email, setEmail] = React.useState("john.do@gmail.com");
   const [password, setPassword] = React.useState("Pippo123");
 
-  const ctx = React.useContext(AuthContext);
+  const ctx = useAuthContext();
 
   const { login, error } = ctx;
 

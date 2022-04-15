@@ -4,8 +4,10 @@ import { API_URL } from "@src/shared/config";
 import { StrapiResponse } from "@src/types";
 
 interface Props {
-  id: string;
+  eventId: string;
   handleUpload: (error?: any) => void;
+  token: string;
+  imageId: string;
 }
 const ImageUpload: React.FC<Props> = (props) => {
   const [image, setImage] = React.useState(null);
@@ -18,17 +20,23 @@ const ImageUpload: React.FC<Props> = (props) => {
       // The unique ID (uid) of the model which the file(s) will be linked to
       formData.append("ref", "api::event.event");
       // The ID of the entry which the file(s) will be linked to
-      formData.append("refId", props.id);
+      formData.append("refId", props.eventId);
       // image is the content field name
       formData.append("field", "image");
-      const res = await fetch(`${API_URL}/api/upload`, {
-        method: "POST",
+      formData.append("path", "dj-events");
+
+      const query = props.imageId ? `id=${props.imageId}` : "";
+      const res = await fetch(`${API_URL}/api/upload?${query}`, {
+        method: props.imageId ? "PUT" : "POST",
         body: formData,
+        headers: {
+          Authorization: `Bearer ${props.token}`,
+        },
       });
       const { error }: StrapiResponse = await res.json();
       props.handleUpload(error);
     },
-    [image, props.id, props.handleUpload]
+    [image, props.eventId, props.handleUpload, props.token, props.imageId]
   );
 
   const handleFileChange = React.useCallback((e: any) => {

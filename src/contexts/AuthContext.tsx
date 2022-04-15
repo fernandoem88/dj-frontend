@@ -1,6 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { NEXT_URL } from "@src/shared/config";
+import Cookie from "cookie";
 
 const AuthContext = React.createContext<{
   user: any;
@@ -14,6 +15,18 @@ const AuthContext = React.createContext<{
   }) => void;
 }>({} as any);
 
+export const useAuthContext = () => {
+  const autCtx = React.useContext(AuthContext);
+  return autCtx;
+};
+
+const TokenContext = React.createContext(() => "" as string);
+
+export const useToken = () => {
+  const getToken = React.useContext(TokenContext);
+  return getToken();
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = React.useState(null);
   const [error, setError] = React.useState(null);
@@ -26,6 +39,7 @@ export const AuthProvider = ({ children }) => {
 
     if (res.ok) {
       const data = await res.json();
+      getTokenRef.current = () => data.token;
       setUser(data.user);
     } else {
       setUser(null);
@@ -39,6 +53,7 @@ export const AuthProvider = ({ children }) => {
       headers: {
         "Content-Type": "application/json",
       },
+      // credentials: 'same-origin',
       body: JSON.stringify(user),
     });
 
@@ -47,6 +62,7 @@ export const AuthProvider = ({ children }) => {
 
       if (res.ok) {
         setUser(data.user);
+        getTokenRef.current = () => data.token;
         router.push("/account/dashboard");
       } else {
         setError(data.message);
@@ -58,6 +74,8 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const getTokenRef = React.useRef(() => "" as string);
+
   // Login user
   const login = async ({ email: identifier, password }) => {
     const res = await fetch(`${NEXT_URL}/api/login`, {
@@ -65,6 +83,7 @@ export const AuthProvider = ({ children }) => {
       headers: {
         "Content-Type": "application/json",
       },
+      // credentials: "same-origin",
       body: JSON.stringify({
         identifier,
         password,
@@ -75,6 +94,7 @@ export const AuthProvider = ({ children }) => {
 
     if (res.ok) {
       setUser(data.user);
+      getTokenRef.current = () => data.token;
       router.push("/account/dashboard");
     } else {
       setError(data.message);
@@ -90,6 +110,7 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (res.ok) {
+        getTokenRef.current = () => "";
         setUser(null);
         router.push("/");
       }
@@ -102,9 +123,11 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, error, register, login, logout }}>
-      {children}
+      <TokenContext.Provider value={getTokenRef.current}>
+        {children}
+      </TokenContext.Provider>
     </AuthContext.Provider>
   );
 };
 
-export default AuthContext;
+export default React.memo(AuthProvider);

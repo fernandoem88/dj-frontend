@@ -9,12 +9,23 @@ interface Props {
 export const formatDateStr = (date: string) => {
   return new Date(date).toLocaleDateString("de-DE");
 };
+export enum ImgFormat {
+  thumbnail = 0,
+  small = 1,
+  medium = 2,
+  large = 3,
+}
+
 export const getImageSrc = (
   image: any,
-  format: "thumbnail" | "large" | "small" | "medium" = "thumbnail"
+  format: ImgFormat = ImgFormat.thumbnail
 ) => {
-  if (!image) return "/images/event-default.png";
-  return image.formats[format].url;
+  if (!image?.formats) return "/images/event-default.png";
+
+  const formatNames = Object.values(ImgFormat).filter((v) => isNaN(+v));
+  const formatName = formatNames[format];
+
+  return image.formats[formatName]?.url || "/images/event-default.png";
 };
 const EventItem: React.FC<Props> = ({ event }) => {
   return (

@@ -6,6 +6,9 @@ import { API_URL } from "@src/shared/config";
 import qs from "qs";
 import styled from "styled-components";
 import DashboardEvent from "@src/components/DashboardEvent";
+import { useToken } from "@src/contexts/AuthContext";
+import { toast, ToastContainer } from "react-toastify";
+import { useRouter } from "next/router";
 
 export const H1 = styled.h1.attrs({
   "data-tbsc-name": "Account--H1",
@@ -30,13 +33,29 @@ interface Props {
   events: any[];
 }
 const DashboardPage: React.FC<Props> = (props) => {
-  React.useEffect(() => {
-    console.log("...dashboard", props.events, props);
-  }, []);
-
-  const handleDelete = React.useCallback((eventId: string) => {
-    // callback logic goes here
-  }, []);
+  const token = useToken();
+  const router = useRouter();
+  const handleDelete = React.useCallback(
+    async (eventId: string) => {
+      try {
+        const res = await fetch(`${API_URL}/api/events/${eventId}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          router.reload();
+          toast.success(`event ${eventId} deleted successfully!`);
+        } else {
+          toast.error(`${res.status} error: ${res.statusText}`);
+        }
+      } catch (error) {
+        toast.error(`500 error: ${error?.message || "something went wrong"}`);
+      }
+    },
+    [token, router]
+  );
 
   return (
     <Layout title="User Dashboard">
@@ -53,6 +72,7 @@ const DashboardPage: React.FC<Props> = (props) => {
           );
         })}
       </div>
+      <ToastContainer />
     </Layout>
   );
 };
@@ -61,25 +81,37 @@ export type DashboardPageProps = Props;
 export default React.memo(DashboardPage);
 
 export const getServerSideProps = async (ctx) => {
-  const { token } = parseCookies(ctx.req);
-  const query = qs.stringify(
-    {
-      populate: "*",
-    },
-    {
-      encodeValuesOnly: true,
-    }
-  );
-  const res = await fetch(`${API_URL}/api/user-events?${query}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  const { data, meta, error = null } = await res.json();
+  try {
+    const { token } = parseCookies(ctx.req);
+    const query = qs.stringify(
+      {
+        populate: "*",
+      },
+      {
+        encodeValuesOnly: true,
+      }
+    );
+    const res = await fetch(`${API_URL}/api/user-events?${query}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const { data, meta, error = null } = await res.json();
 
-  const events = (data || []).map((d) => {
-    return { id: d.id, ...d.attributes };
-  });
-  return { props: { events, error } };
+    const events = (data || []).map((d) => {
+      return { id: d.id, ...d.attributes };
+    });
+    return { props: { events, error } };
+  } catch (error) {
+    return {
+      props: {
+        redirect: {
+          permanent: false,
+          destination: "/login",
+        },
+        error: { message: error?.message || "something went wrong" },
+      },
+    };
+  }
 };

@@ -22,7 +22,7 @@ export const DashboradEvent: React.FC<Props> = ({ event, handleDelete }) => {
       </Link>
       <Link href="#">
         <sc.BtnDelete onClick={handleDelete}>
-          <FaTrash /> <span>Edit event</span>
+          <FaTrash /> <span>Delete event</span>
         </sc.BtnDelete>
       </Link>
     </sc.Event>

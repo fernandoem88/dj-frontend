@@ -50,12 +50,12 @@ const handler = async (req, res: any) => {
         cookie.serialize("token", result.jwt, {
           httpOnly: true,
           secure: !isNodeEnvDev,
-          maxAge: 60 * 60 * 24 * 7, // 1 week
+          maxAge: 60 * 60 * 24 * 1, // 1 day
           sameSite: "strict",
           path: "/",
         })
       );
-      res.status(200).send({ user: result.user });
+      res.status(200).send({ user: result.user, token: result.jwt });
       return;
     }
     res.status(405).send({ message: (result as any).message[0].messages[0] });

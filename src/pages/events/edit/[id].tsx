@@ -12,8 +12,10 @@ import styles from "@styles/Form.module.css";
 import { API_URL } from "@src/shared/config";
 import { StrapiResponse } from "@src/types";
 import { getImageSrc } from "@src/components/EventItem";
+import { useToken } from "@src/contexts/AuthContext";
 
 interface Props {
+  error?: string;
   event: {
     id: string;
     name: string;
@@ -24,6 +26,7 @@ interface Props {
     time: string;
     description: string;
     image?: any;
+    imageId?: string;
   };
 }
 
@@ -32,7 +35,7 @@ const EditEventPage: React.FC<Props> = (props) => {
   const [imagePreview, setImagePreview] = React.useState(getImageSrc(image));
   const [values, setValues] = React.useState(otherFields);
   const [showModal, setShowModal] = React.useState(false);
-
+  const token = useToken();
   const router = useRouter();
 
   const handleSubmit = React.useCallback(
@@ -48,7 +51,10 @@ const EditEventPage: React.FC<Props> = (props) => {
 
       const res = await fetch(`${API_URL}/api/events/${props.event.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ data: values }),
       });
 
@@ -65,7 +71,7 @@ const EditEventPage: React.FC<Props> = (props) => {
       }
       router.push(`/events/${props.event.id}`);
     },
-    [values, props.event.id]
+    [values, props.event.id, token]
   );
 
   const handleChange = React.useCallback((e: any) => {
@@ -108,17 +114,7 @@ const EditEventPage: React.FC<Props> = (props) => {
       toast.error(`${errorData.status} error: ${errorData.message}`);
       return;
     }
-    const res = await fetch(
-      `${API_URL}/api/events/${props.event.id}?populate=image`
-    );
-    const { data, error }: StrapiResponse = await res.json();
-    if (error) {
-      toast.error(`${error.status} error: ${error.message}`);
-      return;
-    }
-    const imgSrc = getImageSrc(data.attributes.image?.data?.attributes);
-    setImagePreview(imgSrc);
-    setShowModal(false);
+    router.reload();
   }, []);
 
   const handleModalClose = React.useCallback(() => {
@@ -142,7 +138,9 @@ const EditEventPage: React.FC<Props> = (props) => {
           <div>
             <label>Image preview </label>
             <div>
-              <Image src={imagePreview} width={170} height={100} />
+              {imagePreview && (
+                <Image src={imagePreview} width={170} height={100} />
+              )}
 
               <button className="btn-secondary" onClick={handleImageSet}>
                 <FaImage /> set image
@@ -157,7 +155,12 @@ const EditEventPage: React.FC<Props> = (props) => {
         onClose={handleModalClose}
         title={props.event.name}
       >
-        <ImageUpload id={props.event.id} handleUpload={handleUpload} />
+        <ImageUpload
+          eventId={props.event.id}
+          imageId={props.event.imageId || ""}
+          handleUpload={handleUpload}
+          token={token}
+        />
       </Modal>
     </Layout>
   );
@@ -166,22 +169,32 @@ const EditEventPage: React.FC<Props> = (props) => {
 export async function getServerSideProps({ params, req }: any) {
   const { id } = params;
 
-  const res = await fetch(`${API_URL}/api/events/${id}?populate=*`);
-  const { data } = await res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/events/${id}?populate=*`);
+    const { data } = await res.json();
+    const image = data.attributes.image?.data?.attributes || null;
 
-  const event = {
-    id: data.id,
-    ...data.attributes,
-    image: data.attributes.image?.data?.attributes || null,
-  };
+    const event = {
+      id: data?.id,
+      ...data.attributes,
+      image,
+      imageId: data.attributes.image?.data?.id || null,
+    };
 
-  const props = {
-    event,
-  };
-  return {
-    props,
-    // revalidate: 1
-  };
+    const props = {
+      event,
+    };
+    return {
+      props,
+      // revalidate: 1
+    };
+  } catch (error) {
+    console.log("error", error.message);
+    return {
+      redirect: { destination: "/account/login", permanent: false },
+      props: { error: error?.message || "something went wrong", event: {} },
+    };
+  }
 }
 
 export type EditEventPageProps = Props;
