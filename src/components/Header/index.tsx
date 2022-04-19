@@ -2,19 +2,19 @@ import Link from "next/link";
 import { FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
 import React from "react";
 import Search from "@src/components/Search";
-import styles from "@styles/header.module.css";
+import * as sc from "./styled";
 import { useAuthContext } from "@src/contexts/AuthContext";
 
 interface Props {}
 const Header: React.FC<Props> = (props) => {
   const { user, logout } = useAuthContext();
   return (
-    <header className={styles.header}>
-      <div className={styles.logo}>
+    <sc.Header>
+      <sc.Logo>
         <Link href="/">
           <a>DJ Events</a>
         </Link>
-      </div>
+      </sc.Logo>
 
       <Search />
 
@@ -63,7 +63,7 @@ const Header: React.FC<Props> = (props) => {
           </li>
         </ul>
       </nav>
-    </header>
+    </sc.Header>
   );
 };
 export type HeaderProps = Props;

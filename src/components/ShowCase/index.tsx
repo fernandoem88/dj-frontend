@@ -1,13 +1,13 @@
 import React from "react";
-import styles from "@styles/ShowCase.module.css";
+import * as sc from "./styled";
 
 interface Props {}
 const ShowCase: React.FC<Props> = (props) => {
   return (
-    <div className={styles.showcase}>
+    <sc.Root>
       <h1>Welcome to the party!</h1>
       <h2>Find the hottest DJ events</h2>
-    </div>
+    </sc.Root>
   );
 };
 export type ShowCaseProps = Props;

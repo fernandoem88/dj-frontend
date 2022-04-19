@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import styles from "@styles/EventItem.module.css";
+import * as sc from "./styled";
 
 interface Props {
   event: any;
@@ -29,22 +29,22 @@ export const getImageSrc = (
 };
 const EventItem: React.FC<Props> = ({ event }) => {
   return (
-    <div className={styles.event}>
-      <div className={styles.img}>
+    <sc.EventSC>
+      <sc.EventImg>
         <Image src={getImageSrc(event.image)} width="170" height="100" alt="" />
-      </div>
-      <div className={styles.info}>
+      </sc.EventImg>
+      <sc.Info>
         <span>
           {formatDateStr(event.date)} at {event.time}
         </span>
         <h3>{event.name}</h3>
-      </div>
-      <div className={styles.link}>
+      </sc.Info>
+      <div>
         <Link href={`/events/${event.id}`}>
           <a className={"btn"}>Details</a>
         </Link>
       </div>
-    </div>
+    </sc.EventSC>
   );
 };
 export type EventItemProps = Props;

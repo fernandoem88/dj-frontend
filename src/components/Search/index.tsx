@@ -1,6 +1,6 @@
 import React from "react";
-import styles from "@styles/Search.module.css";
 import { useRouter } from "next/router";
+import * as sc from "./styled";
 
 interface Props {}
 const Search: React.FC<Props> = (props) => {
@@ -21,7 +21,7 @@ const Search: React.FC<Props> = (props) => {
   }, []);
 
   return (
-    <div className={styles.search}>
+    <sc.Root>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -30,7 +30,7 @@ const Search: React.FC<Props> = (props) => {
           placeholder="Search Events"
         />
       </form>
-    </div>
+    </sc.Root>
   );
 };
 export type SearchProps = Props;

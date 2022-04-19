@@ -4,7 +4,7 @@ import Head from "next/head";
 import Header from "@src/components/Header";
 import Footer from "@src/components/Footer";
 import ShowCase from "@src/components/ShowCase";
-import styles from "@styles/Layout.module.css";
+import * as sc from "./styled";
 
 interface Props {
   title?: string;
@@ -35,7 +35,7 @@ const Layout: React.FC<Props> = (props) => {
       </Head>
       <Header />
       {isHome && <ShowCase />}
-      <div className={styles.container}>{props.children}</div>
+      <sc.Root>{props.children}</sc.Root>
       <Footer />
     </div>
   );

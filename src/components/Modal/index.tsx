@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { FaTimes } from "react-icons/fa";
-import styles from "@styles/Modal.module.css";
+import * as sc from "./styled";
 
 interface Props {
   onClose: () => void;
@@ -19,17 +19,17 @@ const Modal: React.FC<Props> = (props) => {
   };
 
   const modalContent = props.show ? (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <div className={styles.header}>
+    <sc.Overlay>
+      <sc.Root>
+        <sc.Header>
           <a href="#" onClick={handleClose}>
             <FaTimes />
           </a>
-        </div>
+        </sc.Header>
         {props.title && <div>{props.title}</div>}
-        <div className={styles.body}>{props.children}</div>
-      </div>
-    </div>
+        <sc.Body>{props.children}</sc.Body>
+      </sc.Root>
+    </sc.Overlay>
   ) : null;
 
   if (isBrowser) {
