@@ -22,12 +22,6 @@ export const Form = styled.form.attrs({
     width: 100%;
     margin: 20px 0 30px;
   }
-
-  & .file {
-    border: 1px #ccc solid;
-    background-color: #f4f4f4;
-    padding: 10px;
-  }
 `;
 Form.displayName = "EditEventContainerForm";
 
@@ -43,3 +37,12 @@ export const Grid = styled.div.attrs({
   }
 `;
 Grid.displayName = "EditEventContainerGrid";
+
+export const File = styled.div.attrs({
+  "data-tbsc-name": "EditEventContainer--File",
+})<{}>`
+  border: 1px #ccc solid;
+  background-color: #f4f4f4;
+  padding: 10px;
+`;
+File.displayName = "EditEventContainerFile";

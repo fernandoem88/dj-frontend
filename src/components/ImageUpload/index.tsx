@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "@styles/Form.module.css";
+import * as scEdit from "@src/containers/EditEventContainer/styled";
 import { API_URL } from "@src/shared/config";
 import { StrapiResponse } from "@src/types";
 
@@ -43,14 +43,14 @@ const ImageUpload: React.FC<Props> = (props) => {
     setImage(e.target.files[0]);
   }, []);
   return (
-    <div className={styles.form}>
+    <div>
       <h1>Upload Event image</h1>
-      <form onSubmit={handleSubmit}>
-        <div className={styles.file}>
+      <scEdit.Form onSubmit={handleSubmit}>
+        <scEdit.File>
           <input type="file" onChange={handleFileChange} />
-        </div>
+        </scEdit.File>
         <input type="submit" value="upload" className="btn" />
-      </form>
+      </scEdit.Form>
     </div>
   );
 };
